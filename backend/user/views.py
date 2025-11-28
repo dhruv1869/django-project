@@ -9,9 +9,6 @@ from .models import User, Employee, EmployeeManagerMap
 ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg"]
 UPLOAD_FOLDER = os.path.join(settings.MEDIA_ROOT, "employees")
 
-# -------------------------------
-# CREATE EMPLOYEE
-# -------------------------------
 @csrf_exempt
 def create_user(request):
     if request.method != "POST":
@@ -101,10 +98,6 @@ def create_user(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-
-# -------------------------------
-# LOGIN
-# -------------------------------
 @csrf_exempt
 def login_user(request):
     if request.method != "POST":
