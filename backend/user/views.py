@@ -115,7 +115,6 @@ def create_user(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-    
 @csrf_exempt
 def login_user(request):
     if request.method != "POST":
