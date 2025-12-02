@@ -27,7 +27,7 @@ class User(models.Model):
     is_superadmin = models.BooleanField(default=False)
     is_hr = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
-    is_employee = models.BooleanField(default=True)
+    is_employee = models.BooleanField(default=False)
 
     employee = models.ForeignKey(
         Employee,

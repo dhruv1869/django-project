@@ -1,3 +1,6 @@
-superadmin: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsImV4cCI6MTc2NDI4Nzk5NCwiaWF0IjoxNzY0MjQ0Nzk0fQ.WRscIXTiIYJTdy0aOvr4gHuXY8xmsh-fObv-68G8_g0"
 User@E22032->hr pssword
 vDRuAh->rakesh(employee_password)
+mohan Hr->BcqvI2
+kamo manger->QiCw14
+chamo employee->CHAMO
+dock manger->zau3O1
