@@ -4,6 +4,8 @@ from datetime import datetime, timedelta, timezone
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from jose import JWTError
+from django.http import JsonResponse
+from user.models import User
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
@@ -28,3 +30,54 @@ def decode_access_token(token: str):
         return payload
     except JWTError:
         return None
+
+def get_user_from_request(request):
+    auth = request.headers.get("Authorization")
+
+    if not auth or not auth.startswith("Bearer "):
+        return None, JsonResponse(
+            {"error": "Authorization missing"}, status=401
+        )
+
+    token = auth.split(" ")[1]
+    payload = decode_access_token(token)
+
+    if not payload:
+        return None, JsonResponse(
+            {"error": "Invalid token"}, status=401
+        )
+
+    user = User.objects.filter(email=payload.get("sub")).first()
+    if not user:
+        return None, JsonResponse(
+            {"error": "User not found"}, status=404
+        )
+
+    return user, None
+
+# utils/auth.py
+
+def authenticate_request(request):
+    auth = request.headers.get("Authorization")
+
+    if not auth or not auth.startswith("Bearer "):
+        return None, JsonResponse(
+            {"error": "Authorization missing"}, status=401
+        )
+
+    token = auth.split(" ")[1]
+    payload = decode_access_token(token)
+
+    if not payload:
+        return None, JsonResponse(
+            {"error": "Invalid token"}, status=401
+        )
+
+    user = User.objects.filter(email=payload.get("sub")).first()
+    if not user:
+        return None, JsonResponse(
+            {"error": "User not found"}, status=404
+        )
+
+    return user, None
+

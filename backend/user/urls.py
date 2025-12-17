@@ -15,3 +15,4 @@ urlpatterns = [
     path("managers/", get_managers),
     path("manager_employee/<str:id>/", get_manager_employees),
 ]
+
