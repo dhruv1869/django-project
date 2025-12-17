@@ -7,116 +7,32 @@ from .utils.auth import verify_password, create_token, hash_password ,decode_acc
 from .models import User, Employee, EmployeeManagerMap
 from django.contrib.auth.hashers import check_password, make_password
 import shutil
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import Http404
+from .serializers import (
+    LoginSerializer,
+    CreateEmployeeSerializer,
+    EmployeeSerializer,
+    UpdateEmployeeSerializer,
+    ChangePasswordSerializer,
+    DeleteEmployeeSerializer,
+    AddPhotoSerializer,
+    GetEmployeePhotosSerializer,
+    DeletePhotoSerializer,
+    GetManagersSerializer,
+    GetManagerEmployeesSerializer
+)
+from .models import User, Employee
+from .utils.auth import create_token, decode_access_token, verify_password
+
 from django.http.multipartparser import MultiPartParser
 
 ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg"]
 UPLOAD_FOLDER = os.path.join(settings.MEDIA_ROOT, "employees")
 
 PHOTOS_BASE_PATH = os.path.join(settings.MEDIA_ROOT, "employees")
-
-@csrf_exempt
-def create_user(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=400)
-
-    token = request.headers.get("Authorization")
-    if not token or not token.startswith("Bearer "):
-        return JsonResponse({"error": "Authorization header missing"}, status=401)
-
-    token = token.split(" ")[1]
-    payload = decode_access_token(token)
-
-    if not payload:
-        return JsonResponse({"error": "Invalid token"}, status=401)
-
-    current_user_email = payload.get("sub")
-    current_user = User.objects.filter(email=current_user_email).first()
-
-    if not current_user:
-        return JsonResponse({"error": "User not found"}, status=404)
-
-    if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
-        return JsonResponse({"error": "Only SuperAdmin, HR, or Manager can create users"}, status=403)
-
-    if current_user.is_manager:
-        if request.POST.get("is_superadmin") == "true":
-            return JsonResponse({"error": "Manager cannot create SuperAdmin"}, status=403)
-
-    try:
-        name = request.POST.get("username")
-        email = request.POST.get("email")
-        empid = request.POST.get("empid")
-        is_superadmin = request.POST.get("is_superadmin") == "true"
-        is_hr = request.POST.get("is_hr") == "true"
-        is_manager = request.POST.get("is_manager") == "true"
-        manager_email = request.POST.get("manager_email")
-        file = request.FILES.get("file")
-
-        if not name or not email or not empid or not file:
-            return JsonResponse({"error": "Missing required fields"}, status=400)
-
-        if file.content_type not in ALLOWED_IMAGE_TYPES:
-            return JsonResponse({"error": "Invalid image type"}, status=400)
-
-        if Employee.objects.filter(empid=empid).exists():
-            return JsonResponse({"error": "Employee ID already exists"}, status=400)
-
-        if Employee.objects.filter(email=email).exists():
-            return JsonResponse({"error": "Email already exists"}, status=400)
-
-        password = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-        hashed = hash_password(password)
-
-        employee = Employee.objects.create(
-            empid=empid,
-            name=name,
-            email=email,
-            password=hashed
-        )
-
-        user = User.objects.create(
-            email=email,
-            hashed_password=hashed,
-            is_superadmin=is_superadmin,
-            is_hr=is_hr,
-            is_manager=is_manager,
-            is_employee=True,
-            employee=employee
-        )
-
-        if manager_email:
-            manager = User.objects.filter(email=manager_email, is_manager=True).first()
-            if not manager:
-                return JsonResponse({"error": "Invalid manager email"}, status=400)
-
-            if manager.email == email:
-                return JsonResponse({"error": "User cannot be own manager"}, status=400)
-
-            EmployeeManagerMap.objects.create(employee=employee, manager=manager)
-
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        emp_dir = os.path.join(UPLOAD_FOLDER, empid)
-        os.makedirs(emp_dir, exist_ok=True)
-
-        ext = os.path.splitext(file.name)[1]
-        filename = f"{uuid4().hex}{ext}"
-        filepath = os.path.join(emp_dir, filename)
-
-        with open(filepath, "wb") as f:
-            for chunk in file.chunks():
-                f.write(chunk)
-
-        return JsonResponse({
-            "message": "Employee created successfully",
-            "username": name,
-            "email": email,
-            "empid": empid,
-            "password": password,
-            "user_id": user.id
-        })
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def login_user(request):
@@ -126,14 +42,14 @@ def login_user(request):
     try:
         data = json.loads(request.body)
 
-        email = data.get("email")
-        password = data.get("password")
+        serializer = LoginSerializer(data=data)
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
 
-        if not email or not password:
-            return JsonResponse({"error": "Email and password required"}, status=400)
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
 
         user = User.objects.filter(email=email).first()
-
         if not user:
             return JsonResponse({"error": "Invalid email/password"}, status=401)
 
@@ -146,12 +62,93 @@ def login_user(request):
             "username": user.email,
             "access_token": token,
             "token_type": "bearer"
-        })
+        }, status=200)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+@csrf_exempt
+def create_user(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=400)
 
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JsonResponse({"error": "Authorization header missing"}, status=401)
+
+    token = token.split(" ")[1]
+    payload = decode_access_token(token)
+    if not payload:
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    current_user_email = payload.get("sub")
+    current_user = User.objects.filter(email=current_user_email).first()
+    if not current_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
+        return JsonResponse(
+            {"error": "Only SuperAdmin, HR, or Manager can create users"},
+            status=403
+        )
+
+    if current_user.is_manager:
+        if request.POST.get("is_superadmin") == "true":
+            return JsonResponse(
+                {"error": "Manager cannot create SuperAdmin"},
+                status=403
+            )
+
+    try:
+        file = request.FILES.get("file")
+        if not file:
+            return JsonResponse({"error": "Image file required"}, status=400)
+
+        if file.content_type not in ALLOWED_IMAGE_TYPES:
+            return JsonResponse({"error": "Invalid image type"}, status=400)
+
+        serializer_data = {
+            "username": request.POST.get("username"),
+            "email": request.POST.get("email"),
+            "empid": request.POST.get("empid"),
+            "is_superadmin": request.POST.get("is_superadmin") == "true",
+            "is_hr": request.POST.get("is_hr") == "true",
+            "is_manager": request.POST.get("is_manager") == "true",
+            "manager_email": request.POST.get("manager_email")
+        }
+
+        serializer = CreateEmployeeSerializer(data=serializer_data)
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
+
+        result = serializer.save()
+        employee = result["employee"]
+        user = result["user"]
+        password = result["password"]
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        emp_dir = os.path.join(UPLOAD_FOLDER, employee.empid)
+        os.makedirs(emp_dir, exist_ok=True)
+
+        ext = os.path.splitext(file.name)[1]
+        filename = f"{uuid4().hex}{ext}"
+        filepath = os.path.join(emp_dir, filename)
+
+        with open(filepath, "wb") as f:
+            for chunk in file.chunks():
+                f.write(chunk)
+
+        return JsonResponse({
+            "message": "Employee created successfully",
+            "username": employee.name,
+            "email": employee.email,
+            "empid": employee.empid,
+            "password": password,
+            "user_id": user.id
+        }, status=201)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 def to_bool(v):
@@ -201,23 +198,20 @@ def get_employees(request):
     try:
         if role == "manager":
             mapping = EmployeeManagerMap.objects.filter(manager=current_user)
-            employee_ids = [m.employee.id for m in mapping]
-
-            employees = Employee.objects.filter(id__in=employee_ids).values(
-                "id", "empid", "name", "email"
+            employees = Employee.objects.filter(
+                id__in=[m.employee.id for m in mapping]
             )
-
         else:
-            employees = Employee.objects.all().values(
-                "id", "empid", "name", "email"
-            )
+            employees = Employee.objects.all()
 
-        if not employees:
+        if not employees.exists():
             return JsonResponse({"error": "No employees found"}, status=404)
 
-        enriched = []
-        for emp in employees:
-            empid = str(emp["empid"])
+        serializer = EmployeeSerializer(employees, many=True)
+        data = serializer.data
+
+        for emp in data:
+            empid = emp["empid"]
             folder = os.path.join(PHOTOS_BASE_PATH, empid)
             photos = []
 
@@ -231,12 +225,12 @@ def get_employees(request):
                         )
 
             emp["photoUrl"] = photos
-            enriched.append(emp)
 
-        return JsonResponse({"employees": enriched}, safe=False)
+        return JsonResponse({"employees": data}, safe=False)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
     
 @csrf_exempt
 def get_employee_by_id(request, id):
@@ -269,42 +263,38 @@ def get_employee_by_id(request, id):
         if not emp_obj:
             return JsonResponse({"error": "Employee not found"}, status=404)
 
-        employee = {
-            "id": emp_obj.id,
-            "empid": emp_obj.empid,
-            "name": emp_obj.name,
-            "email": emp_obj.email
-        }
-
         if is_manager:
             is_managed = EmployeeManagerMap.objects.filter(
                 manager=current_user,
                 employee=emp_obj
             ).exists()
-
             if not is_managed:
-                return JsonResponse({"error": "You don't have access to this employee's details."}, status=403)
+                return JsonResponse(
+                    {"error": "You don't have access to this employee"},
+                    status=403
+                )
 
-        emp_id = str(emp_obj.empid)
-        photo_dir = os.path.join(PHOTOS_BASE_PATH, emp_id)
+        serializer = EmployeeSerializer(emp_obj)
+        employee = serializer.data
 
-        photo_urls = []
+        photo_dir = os.path.join(PHOTOS_BASE_PATH, emp_obj.empid)
+        photos = []
+
         if os.path.isdir(photo_dir):
             for file in os.listdir(photo_dir):
                 if file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                    photo_urls.append(
+                    photos.append(
                         request.build_absolute_uri(
-                            f"/media/employees/{emp_id}/{file}"
+                            f"/media/employees/{emp_obj.empid}/{file}"
                         )
                     )
 
-        employee["photos"] = photo_urls
+        employee["photos"] = photos
 
         return JsonResponse({"employee": employee}, safe=False)
 
     except Exception as e:
         return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
-
 
 @csrf_exempt
 def update_employee(request):
@@ -312,7 +302,6 @@ def update_employee(request):
         return JsonResponse({"error": "PATCH required"}, status=400)
 
     from django.http.multipartparser import MultiPartParser
-    from django.conf import settings
 
     parser = MultiPartParser(request.META, request, request.upload_handlers)
     data, files = parser.parse()
@@ -323,7 +312,6 @@ def update_employee(request):
 
     token = token.split(" ")[1]
     payload = decode_access_token(token)
-
     if not payload:
         return JsonResponse({"error": "Invalid token"}, status=401)
 
@@ -332,21 +320,26 @@ def update_employee(request):
         return JsonResponse({"error": "User not found"}, status=404)
 
     if not (current_user.is_superadmin or current_user.is_hr):
-        return JsonResponse({"error": "Only superadmin or HR can update employees"}, status=403)
+        return JsonResponse(
+            {"error": "Only superadmin or HR can update employees"},
+            status=403
+        )
 
-    empid = data.get("empid")
-    name = data.get("name")
-    email = data.get("email")
+    serializer = UpdateEmployeeSerializer(data=data)
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
 
-    is_superadmin = data.get("is_superadmin")
-    is_hr = data.get("is_hr")
-    is_manager = data.get("is_manager")
-    manager_email = data.get("manager_email")
+    validated = serializer.validated_data
+
+    empid = validated["empid"]
+    name = validated.get("name")
+    email = validated.get("email")
+
+    is_superadmin = validated.get("is_superadmin")
+    is_hr = validated.get("is_hr")
+    is_manager = validated.get("is_manager")
 
     file = files.get("file")
-
-    if not empid:
-        return JsonResponse({"error": "empid is required"}, status=400)
 
     employee_obj = Employee.objects.filter(empid=empid).first()
     if not employee_obj:
@@ -358,19 +351,17 @@ def update_employee(request):
         if name:
             employee_obj.name = name
         if email:
-            if Employee.objects.filter(email=email).exclude(empid=empid).exists():
-                return JsonResponse({"error": "Email already exists"}, status=400)
             employee_obj.email = email
         employee_obj.save()
 
         if email:
             user.email = email
-        if is_superadmin:
-            user.is_superadmin = (is_superadmin == "true")
-        if is_hr:
-            user.is_hr = (is_hr == "true")
-        if is_manager:
-            user.is_manager = (is_manager == "true")
+        if is_superadmin is not None:
+            user.is_superadmin = is_superadmin
+        if is_hr is not None:
+            user.is_hr = is_hr
+        if is_manager is not None:
+            user.is_manager = is_manager
 
         user.save()
 
@@ -385,11 +376,13 @@ def update_employee(request):
                 for chunk in file.chunks():
                     f.write(chunk)
 
-        return JsonResponse({"message": "Employee updated", "empid": empid})
+        return JsonResponse(
+            {"message": "Employee updated", "empid": empid},
+            status=200
+        )
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
 
 @csrf_exempt
 def change_password(request):
@@ -397,14 +390,15 @@ def change_password(request):
         return JsonResponse({"error": "Only POST allowed"}, status=405)
 
     try:
-        data = request.POST  
+        data = request.POST
 
-        old_password = data.get("old_password")
-        new_password = data.get("new_password")
-        email = data.get("email")
+        serializer = ChangePasswordSerializer(data=data)
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
 
-        if not email or not old_password or not new_password:
-            return JsonResponse({"error": "Missing fields"}, status=400)
+        email = serializer.validated_data["email"]
+        old_password = serializer.validated_data["old_password"]
+        new_password = serializer.validated_data["new_password"]
 
         user = User.objects.filter(email=email).first()
         if not user:
@@ -412,9 +406,6 @@ def change_password(request):
 
         if not check_password(old_password, user.hashed_password):
             return JsonResponse({"error": "Incorrect old password"}, status=401)
-
-        if check_password(new_password, user.hashed_password):
-            return JsonResponse({"error": "New password must be different"}, status=400)
 
         hashed_password = make_password(new_password)
 
@@ -427,7 +418,10 @@ def change_password(request):
         user.hashed_password = hashed_password
         user.save()
 
-        return JsonResponse({"message": "Password changed successfully"}, status=200)
+        return JsonResponse(
+            {"message": "Password changed successfully"},
+            status=200
+        )
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -448,14 +442,22 @@ def delete_employee(request, empid):
 
     email = payload.get("sub")
     current_user = User.objects.filter(email=email).first()
-
     if not current_user:
         return JsonResponse({"error": "User not found"}, status=404)
 
     if not (current_user.is_superadmin or current_user.is_hr):
-        return JsonResponse({"error": "Only Superadmin or HR can delete an employee"}, status=403)
+        return JsonResponse(
+            {"error": "Only Superadmin or HR can delete an employee"},
+            status=403
+        )
 
     try:
+        serializer = DeleteEmployeeSerializer(data={"empid": empid})
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
+
+        empid = serializer.validated_data["empid"]
+
         employee = Employee.objects.filter(empid=empid).first()
         if not employee:
             return JsonResponse({"error": "Employee not found"}, status=404)
@@ -464,13 +466,22 @@ def delete_employee(request, empid):
 
         if user:
             if user.is_superadmin:
-                return JsonResponse({"error": "Cannot delete a Superadmin"}, status=403)
+                return JsonResponse(
+                    {"error": "Cannot delete a Superadmin"},
+                    status=403
+                )
 
             if user.is_hr and not current_user.is_superadmin:
-                return JsonResponse({"error": "Only Superadmin can delete an HR"}, status=403)
+                return JsonResponse(
+                    {"error": "Only Superadmin can delete an HR"},
+                    status=403
+                )
 
             if user.id == current_user.id:
-                return JsonResponse({"error": "You cannot delete yourself"}, status=403)
+                return JsonResponse(
+                    {"error": "You cannot delete yourself"},
+                    status=403
+                )
 
             user.delete()
 
@@ -480,10 +491,16 @@ def delete_employee(request, empid):
         if os.path.exists(emp_dir):
             shutil.rmtree(emp_dir)
 
-        return JsonResponse({"message": "Employee and associated user deleted successfully"})
+        return JsonResponse(
+            {"message": "Employee and associated user deleted successfully"},
+            status=200
+        )
 
     except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
+        return JsonResponse(
+            {"error": f"Internal server error: {str(e)}"},
+            status=500
+        )
 
 
 @csrf_exempt
@@ -505,14 +522,19 @@ def add_photo(request, id):
         return JsonResponse({"error": "User not found"}, status=404)
 
     if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
-        return JsonResponse({"error": "You don't have permission to add it."}, status=403)
+        return JsonResponse(
+            {"error": "You don't have permission to add it."},
+            status=403
+        )
 
     parser = MultiPartParser(request.META, request, request.upload_handlers)
     data, files = parser.parse()
 
-    file = files.get("file")
-    if not file:
-        return JsonResponse({"error": "File is required"}, status=400)
+    serializer = AddPhotoSerializer(
+        data={"empid": id, "file": files.get("file")}
+    )
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
 
     employee_obj = Employee.objects.filter(empid=id).first()
     if not employee_obj:
@@ -530,11 +552,7 @@ def add_photo(request, id):
                 status=403
             )
 
-    if file.content_type not in ALLOWED_IMAGE_TYPES:
-        return JsonResponse(
-            {"error": f"Unsupported file type: {file.name} ({file.content_type})"},
-            status=400,
-        )
+    file = serializer.validated_data["file"]
 
     emp_dir = os.path.join(UPLOAD_FOLDER, str(employee_obj.empid))
     os.makedirs(emp_dir, exist_ok=True)
@@ -547,14 +565,15 @@ def add_photo(request, id):
         for chunk in file.chunks():
             f.write(chunk)
 
-    photo_url = request.build_absolute_uri(f"/media/{employee_obj.empid}/{filename}")
+    photo_url = request.build_absolute_uri(
+        f"/media/employees/{employee_obj.empid}/{filename}"
+    )
 
-    return JsonResponse({"photo_url": photo_url})
+    return JsonResponse({"photo_url": photo_url}, status=201)
 
 
 @csrf_exempt
 def get_employee_photos(request, empid):
-
     if request.method != "GET":
         return JsonResponse({"error": "GET request required"}, status=400)
 
@@ -572,7 +591,16 @@ def get_employee_photos(request, empid):
         return JsonResponse({"error": "User not found"}, status=404)
 
     if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
-        return JsonResponse({"error": "You don't have permission to get photos"}, status=403)
+        return JsonResponse(
+            {"error": "You don't have permission to get photos"},
+            status=403
+        )
+
+    serializer = GetEmployeePhotosSerializer(data={"empid": empid})
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
+    empid = serializer.validated_data["empid"]
 
     try:
         employee = Employee.objects.filter(empid=empid).first()
@@ -584,9 +612,11 @@ def get_employee_photos(request, empid):
                 manager=current_user,
                 employee=employee
             ).exists()
-
             if not is_managed:
-                return JsonResponse({"error": "You don't have access to this employee's details"}, status=403)
+                return JsonResponse(
+                    {"error": "You don't have access to this employee's details"},
+                    status=403
+                )
 
         emp_folder = os.path.join(PHOTOS_BASE_PATH, empid)
         photo_urls = []
@@ -599,10 +629,13 @@ def get_employee_photos(request, empid):
                     )
                     photo_urls.append(url)
 
-        return JsonResponse({"urls": photo_urls})
+        return JsonResponse({"urls": photo_urls}, status=200)
 
     except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
+        return JsonResponse(
+            {"error": f"Internal server error: {str(e)}"},
+            status=500
+        )
 
 
 @csrf_exempt
@@ -625,10 +658,19 @@ def delete_photo(request, id):
             return JsonResponse({"error": "User not found"}, status=404)
 
         if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
-            return JsonResponse({"error": "You don't have permission to delete photos."}, status=403)
+            return JsonResponse(
+                {"error": "You don't have permission to delete photos."},
+                status=403
+            )
+
+        serializer = DeletePhotoSerializer(data={"empid": id})
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
+
+        empid = serializer.validated_data["empid"]
 
         try:
-            employee_obj = Employee.objects.get(empid=id)
+            employee_obj = Employee.objects.get(empid=empid)
         except Employee.DoesNotExist:
             return JsonResponse({"error": "Employee not found"}, status=404)
 
@@ -637,7 +679,6 @@ def delete_photo(request, id):
                 manager=current_user,
                 employee=employee_obj
             ).exists()
-
             if not is_managed:
                 return JsonResponse(
                     {"error": "You don't have access to this employee's details."},
@@ -662,14 +703,19 @@ def delete_photo(request, id):
 
         photo_to_delete = photos[0]
         path_to_delete = os.path.join(emp_dir, photo_to_delete)
-
         os.remove(path_to_delete)
 
-        return JsonResponse({"message": f"Photo '{photo_to_delete}' deleted successfully"})
+        return JsonResponse(
+            {"message": f"Photo '{photo_to_delete}' deleted successfully"},
+            status=200
+        )
 
     except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
-    
+        return JsonResponse(
+            {"error": f"Internal server error: {str(e)}"},
+            status=500
+        )
+
 @csrf_exempt
 def get_managers(request):
     if request.method != "GET":
@@ -694,6 +740,10 @@ def get_managers(request):
             status=403
         )
 
+    serializer = GetManagersSerializer(data={})
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
     try:
         managers = User.objects.filter(is_manager=True).select_related("employee")
 
@@ -712,10 +762,13 @@ def get_managers(request):
                 "is_manager": manager.is_manager,
             })
 
-        return JsonResponse({"managers": response_list}, safe=False)
+        return JsonResponse({"managers": response_list}, safe=False, status=200)
 
     except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
+        return JsonResponse(
+            {"error": f"Internal server error: {str(e)}"},
+            status=500
+        )
 
 @csrf_exempt
 def get_manager_employees(request, id):
@@ -737,13 +790,19 @@ def get_manager_employees(request, id):
 
     if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
         return JsonResponse(
-            {"error": "Don't have permission to get the managers list"},
+            {"error": "Don't have permission to get the manager's employees list"},
             status=403
         )
 
+    serializer = GetManagerEmployeesSerializer(data={"empid": id})
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
+    empid = serializer.validated_data["empid"]
+
     try:
         manager_user = User.objects.filter(
-            employee__empid=id,
+            employee__empid=empid,
             is_manager=True
         ).first()
 
