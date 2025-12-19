@@ -19,7 +19,6 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
 
-
 class User(models.Model):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
@@ -33,6 +32,12 @@ class User(models.Model):
         Employee,
         related_name='user',
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    image = models.ImageField(
+        upload_to="employees/",
         null=True,
         blank=True
     )
@@ -61,43 +66,9 @@ class EmployeeManagerMap(models.Model):
         return f"{self.manager.email} -> {self.employee.name}"
 
 
-class TimeLog(models.Model):
-    ACTION_CHOICES = [
-        ('IN', 'IN'),
-        ('OUT', 'OUT'),
-    ]
-
-    id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(Employee, related_name='logs', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField()
-    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
-
-    def __str__(self):
-        return f"{self.employee.name} - {self.action} - {self.timestamp}"
-
-
-class Environment(models.Model):
-    id = models.AutoField(primary_key=True)
-    key = models.CharField(max_length=50, unique=True)
-    value = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.key
-
-
-class MissReport(models.Model):
-    id = models.AutoField(primary_key=True)
-    timestamp = models.DateTimeField()
-    employee = models.ForeignKey(Employee, related_name='reports', on_delete=models.CASCADE)
-    action = models.CharField(max_length=10)
-    reason = models.CharField(max_length=300)
-    status = models.CharField(max_length=10)
-
-    def __str__(self):
-        return f"{self.employee.name} - {self.action} - {self.status}"
-
 class SuperAdminUser(User):
     class Meta:
         proxy = True
         verbose_name = "Super Admin"
         verbose_name_plural = "Super Admins"
+    

@@ -26,16 +26,60 @@ from .serializers import (
 )
 from .models import User, Employee
 from .utils.auth import create_token, decode_access_token, verify_password
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 from django.http.multipartparser import MultiPartParser
 
 ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg"]
-UPLOAD_FOLDER = os.path.join(settings.MEDIA_ROOT, "employees")
+UPLOAD_FOLDER = os.path.join(settings.MEDIA_ROOT, "image")
 
-PHOTOS_BASE_PATH = os.path.join(settings.MEDIA_ROOT, "employees")
+PHOTOS_BASE_PATH = os.path.join(settings.MEDIA_ROOT, "media/employee")
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
-@csrf_exempt
+login_request_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=["email", "password"],
+    properties={
+        "email": openapi.Schema(
+            type=openapi.TYPE_STRING,
+            example="admin@example.com"
+        ),
+        "password": openapi.Schema(
+            type=openapi.TYPE_STRING,
+            example="admin123"
+        ),
+    },
+)
+
+login_response_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "username": openapi.Schema(
+            type=openapi.TYPE_STRING,
+            example="admin@example.com"
+        ),
+        "access_token": openapi.Schema(
+            type=openapi.TYPE_STRING,
+            example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+        ),
+        "token_type": openapi.Schema(
+            type=openapi.TYPE_STRING,
+            example="bearer"
+        ),
+    },
+)
+@swagger_auto_schema(
+    method="post",
+    request_body=login_request_schema,
+    responses={200: login_response_schema},
+    tags=["Authentication"],
+)
+@api_view(["POST"])                
+@permission_classes([AllowAny])   
 def login_user(request):
+
     if request.method != "POST":
         return JsonResponse({"error": "POST required"}, status=400)
 
@@ -50,23 +94,46 @@ def login_user(request):
         password = serializer.validated_data["password"]
 
         user = User.objects.filter(email=email).first()
-        if not user:
-            return JsonResponse({"error": "Invalid email/password"}, status=401)
-
-        if not verify_password(password, user.hashed_password):
-            return JsonResponse({"error": "Invalid email/password"}, status=401)
+        if not user or not verify_password(password, user.hashed_password):
+            return JsonResponse(
+                {"error": "Invalid email/password"},
+                status=401
+            )
 
         token = create_token({"sub": user.email})
 
-        return JsonResponse({
-            "username": user.email,
-            "access_token": token,
-            "token_type": "bearer"
-        }, status=200)
+        return JsonResponse(
+            {
+                "username": user.email,
+                "access_token": token,
+                "token_type": "bearer",
+            },
+            status=200,
+        )
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
+    
+@swagger_auto_schema(
+    method="post", 
+    operation_summary="Create Employee",
+    operation_description="Create employee with image upload",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            description="Bearer <token>",
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    consumes=["multipart/form-data"],
+    request_body=CreateEmployeeSerializer,
+    responses={201: "Employee Created"},
+    tags=["Employee"],
+)
+@api_view(["POST"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def create_user(request):
     if request.method != "POST":
@@ -107,6 +174,7 @@ def create_user(request):
         if file.content_type not in ALLOWED_IMAGE_TYPES:
             return JsonResponse({"error": "Invalid image type"}, status=400)
 
+        # Prepare serializer data
         serializer_data = {
             "username": request.POST.get("username"),
             "email": request.POST.get("email"),
@@ -126,17 +194,7 @@ def create_user(request):
         user = result["user"]
         password = result["password"]
 
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        emp_dir = os.path.join(UPLOAD_FOLDER, employee.empid)
-        os.makedirs(emp_dir, exist_ok=True)
-
-        ext = os.path.splitext(file.name)[1]
-        filename = f"{uuid4().hex}{ext}"
-        filepath = os.path.join(emp_dir, filename)
-
-        with open(filepath, "wb") as f:
-            for chunk in file.chunks():
-                f.write(chunk)
+        user.image.save(file.name, file, save=True)
 
         return JsonResponse({
             "message": "Employee created successfully",
@@ -144,7 +202,8 @@ def create_user(request):
             "email": employee.email,
             "empid": employee.empid,
             "password": password,
-            "user_id": user.id
+            "user_id": user.id,
+            "image_url": user.image.url 
         }, status=201)
 
     except Exception as e:
@@ -158,7 +217,23 @@ def to_bool(v):
         return False
     return str(v).strip().lower() in ["true", "1", "yes"]
 
-
+@swagger_auto_schema(
+    method="get", 
+    operation_summary="Get Employees",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            description="Bearer <token>",
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    responses={200: EmployeeSerializer(many=True)},
+    tags=["Employee"],
+)
+@api_view(["GET"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def get_employees(request):
     if request.method != "GET":
@@ -210,28 +285,35 @@ def get_employees(request):
         serializer = EmployeeSerializer(employees, many=True)
         data = serializer.data
 
-        for emp in data:
-            empid = emp["empid"]
-            folder = os.path.join(PHOTOS_BASE_PATH, empid)
-            photos = []
-
-            if os.path.isdir(folder):
-                for file in os.listdir(folder):
-                    if file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                        photos.append(
-                            request.build_absolute_uri(
-                                f"/media/employees/{empid}/{file}"
-                            )
-                        )
-
-            emp["photoUrl"] = photos
-
+        for emp_dict in data:
+            emp_id = emp_dict["id"]
+            user = User.objects.filter(employee_id=emp_id).first()
+            if user and user.image:
+                emp_dict["image_url"] = request.build_absolute_uri(user.image.url)
+            else:
+                emp_dict["image_url"] = None  
         return JsonResponse({"employees": data}, safe=False)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-    
+@swagger_auto_schema(
+    method="get", 
+    operation_summary="Get Employee By ID",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    responses={200: EmployeeSerializer},
+    tags=["Employee"],
+)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def get_employee_by_id(request, id):
     if request.method != "GET":
@@ -251,66 +333,62 @@ def get_employee_by_id(request, id):
     if not current_user:
         return JsonResponse({"error": "User not found"}, status=404)
 
-    is_superadmin = to_bool(current_user.is_superadmin)
-    is_hr = to_bool(current_user.is_hr)
-    is_manager = to_bool(current_user.is_manager)
+    if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
+        return JsonResponse({"error": "Permission denied"}, status=403)
 
-    if not (is_superadmin or is_hr or is_manager):
-        return JsonResponse({"error": "You don't have permission to get employee details."}, status=403)
+    emp_obj = Employee.objects.filter(empid=id).first()
+    if not emp_obj:
+        return JsonResponse({"error": "Employee not found"}, status=404)
 
-    try:
-        emp_obj = Employee.objects.filter(empid=id).first()
-        if not emp_obj:
-            return JsonResponse({"error": "Employee not found"}, status=404)
+    if current_user.is_manager:
+        if not EmployeeManagerMap.objects.filter(
+            manager=current_user, employee=emp_obj
+        ).exists():
+            return JsonResponse({"error": "Access denied"}, status=403)
 
-        if is_manager:
-            is_managed = EmployeeManagerMap.objects.filter(
-                manager=current_user,
-                employee=emp_obj
-            ).exists()
-            if not is_managed:
-                return JsonResponse(
-                    {"error": "You don't have access to this employee"},
-                    status=403
-                )
+    serializer = EmployeeSerializer(emp_obj)
+    employee = serializer.data
 
-        serializer = EmployeeSerializer(emp_obj)
-        employee = serializer.data
+    user_obj = User.objects.filter(employee=emp_obj).first()
 
-        photo_dir = os.path.join(PHOTOS_BASE_PATH, emp_obj.empid)
-        photos = []
+    if user_obj and user_obj.image:
+        employee["image_url"] = request.build_absolute_uri(user_obj.image.url)
+    else:
+        employee["image_url"] = None
 
-        if os.path.isdir(photo_dir):
-            for file in os.listdir(photo_dir):
-                if file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                    photos.append(
-                        request.build_absolute_uri(
-                            f"/media/employees/{emp_obj.empid}/{file}"
-                        )
-                    )
+    return JsonResponse({"employee": employee})
 
-        employee["photos"] = photos
-
-        return JsonResponse({"employee": employee}, safe=False)
-
-    except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
-
+    
+@swagger_auto_schema(
+    method="patch", 
+    operation_summary="Update Employee",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    consumes=["multipart/form-data"],
+    request_body=UpdateEmployeeSerializer,
+    responses={200: "Updated"},
+    tags=["Employee"],
+)
+@api_view(["PATCH"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def update_employee(request):
-    if request.method != "PATCH":
-        return JsonResponse({"error": "PATCH required"}, status=400)
-
     from django.http.multipartparser import MultiPartParser
 
     parser = MultiPartParser(request.META, request, request.upload_handlers)
     data, files = parser.parse()
 
-    token = request.headers.get("Authorization")
-    if not token or not token.startswith("Bearer "):
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
         return JsonResponse({"error": "Authorization header missing"}, status=401)
 
-    token = token.split(" ")[1]
+    token = auth.split(" ")[1]
     payload = decode_access_token(token)
     if not payload:
         return JsonResponse({"error": "Invalid token"}, status=401)
@@ -330,60 +408,70 @@ def update_employee(request):
         return JsonResponse(serializer.errors, status=400)
 
     validated = serializer.validated_data
-
     empid = validated["empid"]
-    name = validated.get("name")
-    email = validated.get("email")
-
-    is_superadmin = validated.get("is_superadmin")
-    is_hr = validated.get("is_hr")
-    is_manager = validated.get("is_manager")
-
-    file = files.get("file")
 
     employee_obj = Employee.objects.filter(empid=empid).first()
     if not employee_obj:
         return JsonResponse({"error": "Employee not found"}, status=404)
 
     user = User.objects.filter(employee=employee_obj).first()
+    if not user:
+        return JsonResponse({"error": "User not found for employee"}, status=404)
 
     try:
-        if name:
-            employee_obj.name = name
-        if email:
-            employee_obj.email = email
+        if validated.get("name"):
+            employee_obj.name = validated["name"]
+
+        if validated.get("email"):
+            employee_obj.email = validated["email"]
+
         employee_obj.save()
 
-        if email:
-            user.email = email
-        if is_superadmin is not None:
-            user.is_superadmin = is_superadmin
-        if is_hr is not None:
-            user.is_hr = is_hr
-        if is_manager is not None:
-            user.is_manager = is_manager
+        if validated.get("email"):
+            user.email = validated["email"]
 
-        user.save()
+        if validated.get("is_superadmin") is not None:
+            user.is_superadmin = validated["is_superadmin"]
 
-        if file:
-            emp_dir = os.path.join(UPLOAD_FOLDER, empid)
-            os.makedirs(emp_dir, exist_ok=True)
-            ext = os.path.splitext(file.name)[1]
-            filename = f"{uuid4().hex}{ext}"
-            filepath = os.path.join(emp_dir, filename)
+        if validated.get("is_hr") is not None:
+            user.is_hr = validated["is_hr"]
 
-            with open(filepath, "wb") as f:
-                for chunk in file.chunks():
-                    f.write(chunk)
+        if validated.get("is_manager") is not None:
+            user.is_manager = validated["is_manager"]
 
-        return JsonResponse(
-            {"message": "Employee updated", "empid": empid},
-            status=200
-        )
+        image_file = files.get("file")
+        if image_file:
+            user.image = image_file   
+            user.save()
+
+        return JsonResponse({
+            "message": "Employee updated successfully",
+            "empid": empid,
+            "image_url": (
+                request.build_absolute_uri(user.image.url)
+                if user.image else None
+            )
+        })
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+    
+@swagger_auto_schema(
+    method="post",     
+    operation_summary="Change Password",
+    operation_description="Change user password using old password",
+    request_body=ChangePasswordSerializer,
+    responses={
+        200: "Password changed successfully",
+        400: "Validation error",
+        401: "Incorrect old password",
+        404: "User not found",
+    },
+    tags=["chnage pssword"],
+)
+@api_view(["POST"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def change_password(request):
     if request.method != "POST":
@@ -426,6 +514,22 @@ def change_password(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+@swagger_auto_schema(
+    method="delete", 
+    operation_summary="Delete Employee",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    responses={200: "Deleted"},
+    tags=["Employee"],
+)
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def delete_employee(request, empid):
     if request.method != "DELETE":
@@ -502,17 +606,34 @@ def delete_employee(request, empid):
             status=500
         )
 
+@swagger_auto_schema(
+    method="post",
+    operation_summary="Add Employee Photo",
+    consumes=["multipart/form-data"],
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    request_body=AddPhotoSerializer,
+    tags=["Photos"],
+)
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def add_photo(request, id):
     if request.method != "POST":
         return JsonResponse({"error": "POST required"}, status=400)
 
-    token = request.headers.get("Authorization")
-    if not token or not token.startswith("Bearer "):
-        return JsonResponse({"error": "Authorization header missing"}, status=401)
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
+        return JsonResponse({"error": "Authorization missing"}, status=401)
 
-    token = token.split(" ")[1]
+    token = auth.split(" ")[1]
     payload = decode_access_token(token)
     if not payload:
         return JsonResponse({"error": "Invalid token"}, status=401)
@@ -523,7 +644,7 @@ def add_photo(request, id):
 
     if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
         return JsonResponse(
-            {"error": "You don't have permission to add it."},
+            {"error": "You don't have permission to add photo"},
             status=403
         )
 
@@ -536,42 +657,58 @@ def add_photo(request, id):
     if not serializer.is_valid():
         return JsonResponse(serializer.errors, status=400)
 
-    employee_obj = Employee.objects.filter(empid=id).first()
-    if not employee_obj:
+    employee = Employee.objects.filter(empid=id).first()
+    if not employee:
         return JsonResponse({"error": "Employee not found"}, status=404)
 
-    if current_user.is_manager:
-        is_managed = EmployeeManagerMap.objects.filter(
-            manager=current_user,
-            employee=employee_obj
-        ).exists()
+    user = User.objects.filter(employee=employee).first()
+    if not user:
+        return JsonResponse({"error": "User not linked with employee"}, status=404)
 
-        if not is_managed:
+    if current_user.is_manager:
+        if not EmployeeManagerMap.objects.filter(
+            manager=current_user,
+            employee=employee
+        ).exists():
             return JsonResponse(
-                {"error": "You don't have access to this employee's details."},
+                {"error": "You don't have access to this employee"},
                 status=403
             )
 
-    file = serializer.validated_data["file"]
+    image_file = serializer.validated_data["file"]
 
-    emp_dir = os.path.join(UPLOAD_FOLDER, str(employee_obj.empid))
-    os.makedirs(emp_dir, exist_ok=True)
+    if user.image:
+        user.image.delete(save=False)
 
-    ext = os.path.splitext(file.name)[1]
-    filename = f"{uuid4().hex}{ext}"
-    filepath = os.path.join(emp_dir, filename)
+    user.image = image_file
+    user.save()
 
-    with open(filepath, "wb") as f:
-        for chunk in file.chunks():
-            f.write(chunk)
+    image_url = request.build_absolute_uri(user.image.url)
 
-    photo_url = request.build_absolute_uri(
-        f"/media/employees/{employee_obj.empid}/{filename}"
+    return JsonResponse(
+        {
+            "message": "Photo uploaded successfully",
+            "image_url": image_url
+        },
+        status=201
     )
 
-    return JsonResponse({"photo_url": photo_url}, status=201)
+@swagger_auto_schema(
+    method="get",
+    operation_summary="Get Employee Photos",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    tags=["Photos"],
+)
 
-
+@api_view(["GET"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def get_employee_photos(request, empid):
     if request.method != "GET":
@@ -592,7 +729,7 @@ def get_employee_photos(request, empid):
 
     if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
         return JsonResponse(
-            {"error": "You don't have permission to get photos"},
+            {"error": "You don't have permission to get photo"},
             status=403
         )
 
@@ -600,122 +737,130 @@ def get_employee_photos(request, empid):
     if not serializer.is_valid():
         return JsonResponse(serializer.errors, status=400)
 
-    empid = serializer.validated_data["empid"]
+    employee = Employee.objects.filter(empid=empid).first()
+    if not employee:
+        return JsonResponse({"error": "Employee not found"}, status=404)
 
-    try:
-        employee = Employee.objects.filter(empid=empid).first()
-        if not employee:
-            return JsonResponse({"error": "Employee not found"}, status=404)
-
-        if current_user.is_manager:
-            is_managed = EmployeeManagerMap.objects.filter(
-                manager=current_user,
-                employee=employee
-            ).exists()
-            if not is_managed:
-                return JsonResponse(
-                    {"error": "You don't have access to this employee's details"},
-                    status=403
-                )
-
-        emp_folder = os.path.join(PHOTOS_BASE_PATH, empid)
-        photo_urls = []
-
-        if os.path.isdir(emp_folder):
-            for file in os.listdir(emp_folder):
-                if file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                    url = request.build_absolute_uri(
-                        f"/media/employees/{empid}/{file}"
-                    )
-                    photo_urls.append(url)
-
-        return JsonResponse({"urls": photo_urls}, status=200)
-
-    except Exception as e:
-        return JsonResponse(
-            {"error": f"Internal server error: {str(e)}"},
-            status=500
-        )
-
-
-@csrf_exempt
-def delete_photo(request, id):
-    if request.method != "DELETE":
-        return JsonResponse({"error": "Invalid request method"}, status=405)
-
-    try:
-        auth = request.headers.get("Authorization")
-        if not auth or not auth.startswith("Bearer "):
-            return JsonResponse({"error": "Authorization missing"}, status=401)
-
-        token = auth.split(" ")[1]
-        payload = decode_access_token(token)
-        if not payload:
-            return JsonResponse({"error": "Invalid token"}, status=401)
-
-        current_user = User.objects.filter(email=payload.get("sub")).first()
-        if not current_user:
-            return JsonResponse({"error": "User not found"}, status=404)
-
-        if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
+    if current_user.is_manager:
+        if not EmployeeManagerMap.objects.filter(
+            manager=current_user,
+            employee=employee
+        ).exists():
             return JsonResponse(
-                {"error": "You don't have permission to delete photos."},
+                {"error": "You don't have access to this employee"},
                 status=403
             )
 
-        serializer = DeletePhotoSerializer(data={"empid": id})
-        if not serializer.is_valid():
-            return JsonResponse(serializer.errors, status=400)
+    user = User.objects.filter(employee=employee).first()
+    if not user:
+        return JsonResponse({"error": "User not linked with employee"}, status=404)
 
-        empid = serializer.validated_data["empid"]
-
-        try:
-            employee_obj = Employee.objects.get(empid=empid)
-        except Employee.DoesNotExist:
-            return JsonResponse({"error": "Employee not found"}, status=404)
-
-        if current_user.is_manager:
-            is_managed = EmployeeManagerMap.objects.filter(
-                manager=current_user,
-                employee=employee_obj
-            ).exists()
-            if not is_managed:
-                return JsonResponse(
-                    {"error": "You don't have access to this employee's details."},
-                    status=403
-                )
-
-        emp_dir = os.path.join(UPLOAD_FOLDER, employee_obj.empid)
-
-        if not os.path.exists(emp_dir):
-            return JsonResponse({"error": "No photos found"}, status=404)
-
-        photos = [
-            f for f in os.listdir(emp_dir)
-            if f.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
-        ]
-
-        if len(photos) == 0:
-            return JsonResponse({"error": "No photos found"}, status=404)
-
-        if len(photos) <= 1:
-            return JsonResponse({"error": "At least one photo must remain."}, status=400)
-
-        photo_to_delete = photos[0]
-        path_to_delete = os.path.join(emp_dir, photo_to_delete)
-        os.remove(path_to_delete)
-
+    if not user.image:
         return JsonResponse(
-            {"message": f"Photo '{photo_to_delete}' deleted successfully"},
+            {"image": None, "message": "No image uploaded"},
             status=200
         )
 
-    except Exception as e:
+    image_url = request.build_absolute_uri(user.image.url)
+
+    return JsonResponse(
+        {"image": image_url},
+        status=200
+    )
+
+@swagger_auto_schema(
+    method="delete",
+    operation_summary="Delete Employee Photo",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    tags=["Photos"],
+)
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
+@csrf_exempt
+def delete_photo(request, id):
+    if request.method != "DELETE":
+        return JsonResponse({"error": "DELETE request required"}, status=405)
+
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
+        return JsonResponse({"error": "Authorization missing"}, status=401)
+
+    token = auth.split(" ")[1]
+    payload = decode_access_token(token)
+    if not payload:
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    current_user = User.objects.filter(email=payload.get("sub")).first()
+    if not current_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    if not (current_user.is_superadmin or current_user.is_hr or current_user.is_manager):
         return JsonResponse(
-            {"error": f"Internal server error: {str(e)}"},
-            status=500
+            {"error": "You don't have permission to delete photo"},
+            status=403
         )
 
+    serializer = DeletePhotoSerializer(data={"empid": id})
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
+    empid = serializer.validated_data["empid"]
+
+    employee = Employee.objects.filter(empid=empid).first()
+    if not employee:
+        return JsonResponse({"error": "Employee not found"}, status=404)
+
+    if current_user.is_manager:
+        if not EmployeeManagerMap.objects.filter(
+            manager=current_user,
+            employee=employee
+        ).exists():
+            return JsonResponse(
+                {"error": "You don't have access to this employee"},
+                status=403
+            )
+
+    user = User.objects.filter(employee=employee).first()
+    if not user:
+        return JsonResponse({"error": "User not linked with employee"}, status=404)
+
+    if not user.image:
+        return JsonResponse(
+            {"error": "No image found to delete"},
+            status=404
+        )
+
+    user.image.delete(save=False)   
+    user.image = None
+    user.save()
+
+    return JsonResponse(
+        {"message": "Employee image deleted successfully"},
+        status=200
+    )
+
+@swagger_auto_schema(
+    method="get",
+    operation_summary="Get Managers",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    tags=["Manager"],
+)
+@api_view(["GET"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def get_managers(request):
     if request.method != "GET":
@@ -740,10 +885,6 @@ def get_managers(request):
             status=403
         )
 
-    serializer = GetManagersSerializer(data={})
-    if not serializer.is_valid():
-        return JsonResponse(serializer.errors, status=400)
-
     try:
         managers = User.objects.filter(is_manager=True).select_related("employee")
 
@@ -752,24 +893,45 @@ def get_managers(request):
         for manager in managers:
             emp = manager.employee
 
+            image_url = (
+                request.build_absolute_uri(manager.image.url)
+                if manager.image else None
+            )
+
             response_list.append({
                 "id": manager.id,
                 "email": manager.email,
                 "name": emp.name if emp else "",
                 "empid": emp.empid if emp else "",
+                "image_url": image_url,
                 "is_superadmin": manager.is_superadmin,
                 "is_hr": manager.is_hr,
                 "is_manager": manager.is_manager,
             })
 
-        return JsonResponse({"managers": response_list}, safe=False, status=200)
+        return JsonResponse({"managers": response_list}, status=200)
 
     except Exception as e:
         return JsonResponse(
             {"error": f"Internal server error: {str(e)}"},
             status=500
         )
-
+    
+@swagger_auto_schema(
+    method="get",    
+    operation_summary="Get Manager Employees",
+    manual_parameters=[
+        openapi.Parameter(
+            "Authorization",
+            openapi.IN_HEADER,
+            type=openapi.TYPE_STRING,
+            required=True,
+        )
+    ],
+    tags=["Manager"],
+)
+@api_view(["GET"])
+@permission_classes([AllowAny])
 @csrf_exempt
 def get_manager_employees(request, id):
     if request.method != "GET":
@@ -810,15 +972,24 @@ def get_manager_employees(request, id):
             return JsonResponse({"error": "Manager not found"}, status=404)
 
         mappings = EmployeeManagerMap.objects.filter(manager=manager_user)
-        employees = [m.employee for m in mappings]
 
         employee_list = []
-        for emp in employees:
+
+        for m in mappings:
+            emp = m.employee
+            user = User.objects.filter(employee=emp).first()
+
+            image_url = (
+                request.build_absolute_uri(user.image.url)
+                if user and user.image else None
+            )
+
             employee_list.append({
                 "id": emp.id,
                 "empid": emp.empid,
                 "name": emp.name,
-                "email": emp.email
+                "email": emp.email,
+                "image_url": image_url
             })
 
         return JsonResponse(employee_list, safe=False, status=200)
@@ -828,5 +999,3 @@ def get_manager_employees(request, id):
             {"error": f"Internal server error: {str(e)}"},
             status=500
         )
-
-

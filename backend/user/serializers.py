@@ -77,12 +77,20 @@ class CreateEmployeeSerializer(serializers.Serializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Employee
-        fields = ["id", "empid", "name", "email"]
+        fields = ["id", "empid", "name", "email", "image_url"]
 
-from rest_framework import serializers
-from .models import Employee
+    def get_image_url(self, obj):
+        user = getattr(obj, "user", None)
+        if user and user.first() and user.first().image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(user.first().image.url)
+            return user.first().image.url
+        return None
 
 
 class UpdateEmployeeSerializer(serializers.Serializer):

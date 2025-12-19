@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.hashers import make_password
-from .models import User, Employee, EmployeeManagerMap, TimeLog, Environment, MissReport,SuperAdminUser
+from .models import User, Employee, EmployeeManagerMap,SuperAdminUser
 import random
 import string
 
