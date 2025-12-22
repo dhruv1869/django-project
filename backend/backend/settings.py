@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user',
+    'lms',
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
