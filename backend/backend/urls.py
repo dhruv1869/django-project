@@ -23,7 +23,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('user.urls')),
-
+    path('api/lms/', include('lms.urls')),
+    
     path(
         'swagger/',
         schema_view.with_ui('swagger', cache_timeout=0),
