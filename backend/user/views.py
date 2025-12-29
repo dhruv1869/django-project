@@ -28,7 +28,8 @@ from .models import User, Employee
 from .utils.auth import create_token, decode_access_token, verify_password
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-
+from rest_framework.decorators import api_view, permission_classes
+from .permissions import JWTAuthenticationPermission,IsHRorSuperAdmin, IsHR, IsManager, IsEmployee
 from django.http.multipartparser import MultiPartParser
 
 ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg"]
@@ -133,7 +134,7 @@ def login_user(request):
     tags=["Employee"],
 )
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin|IsManager])
 @csrf_exempt
 def create_user(request):
     if request.method != "POST":
@@ -233,45 +234,13 @@ def to_bool(v):
     tags=["Employee"],
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
-@csrf_exempt
+@permission_classes([JWTAuthenticationPermission, IsHRorSuperAdmin])
 def get_employees(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET request required"}, status=400)
 
-    auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer "):
-        return JsonResponse({"error": "Authorization missing"}, status=401)
-
-    token = auth.split(" ")[1]
-    payload = decode_access_token(token)
-    if not payload:
-        return JsonResponse({"error": "Invalid token"}, status=401)
-
-    email = payload.get("sub")
-    current_user = User.objects.filter(email=email).first()
-    if not current_user:
-        return JsonResponse({"error": "User not found"}, status=404)
-
-    is_superadmin = to_bool(current_user.is_superadmin)
-    is_hr = to_bool(current_user.is_hr)
-    is_manager = to_bool(current_user.is_manager)
-    is_employee = to_bool(current_user.is_employee)
-
-    if is_manager:
-        role = "manager"
-    elif is_superadmin:
-        role = "superadmin"
-    elif is_hr:
-        role = "hr"
-    else:
-        role = "employee" 
-
-    if role == "employee":
-        return JsonResponse({"error": "You don't have permission to get employees details."}, status=403)
+    current_user = request.user_obj   
 
     try:
-        if role == "manager":
+        if current_user.is_manager:
             mapping = EmployeeManagerMap.objects.filter(manager=current_user)
             employees = Employee.objects.filter(
                 id__in=[m.employee.id for m in mapping]
@@ -291,7 +260,8 @@ def get_employees(request):
             if user and user.image:
                 emp_dict["image_url"] = request.build_absolute_uri(user.image.url)
             else:
-                emp_dict["image_url"] = None  
+                emp_dict["image_url"] = None
+
         return JsonResponse({"employees": data}, safe=False)
 
     except Exception as e:
@@ -313,7 +283,7 @@ def get_employees(request):
 )
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission, IsHRorSuperAdmin])
 @csrf_exempt
 def get_employee_by_id(request, id):
     if request.method != "GET":
@@ -376,7 +346,7 @@ def get_employee_by_id(request, id):
     tags=["Employee"],
 )
 @api_view(["PATCH"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 @csrf_exempt
 def update_employee(request):
     from django.http.multipartparser import MultiPartParser
@@ -471,7 +441,7 @@ def update_employee(request):
     tags=["chnage pssword"],
 )
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 @csrf_exempt
 def change_password(request):
     if request.method != "POST":
@@ -529,7 +499,7 @@ def change_password(request):
     tags=["Employee"],
 )
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 @csrf_exempt
 def delete_employee(request, empid):
     if request.method != "DELETE":
@@ -623,7 +593,7 @@ def delete_employee(request, empid):
 )
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission, IsHR | IsManager])
 @csrf_exempt
 def add_photo(request, id):
     if request.method != "POST":
@@ -708,7 +678,7 @@ def add_photo(request, id):
 )
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission, IsHR | IsManager])
 @csrf_exempt
 def get_employee_photos(request, empid):
     if request.method != "GET":
@@ -782,7 +752,7 @@ def get_employee_photos(request, empid):
     tags=["Photos"],
 )
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 @csrf_exempt
 def delete_photo(request, id):
     if request.method != "DELETE":
@@ -860,7 +830,7 @@ def delete_photo(request, id):
     tags=["Manager"],
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission, IsHRorSuperAdmin])
 @csrf_exempt
 def get_managers(request):
     if request.method != "GET":
@@ -931,9 +901,10 @@ def get_managers(request):
     tags=["Manager"],
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
-@csrf_exempt
+@permission_classes([JWTAuthenticationPermission,IsManager])
 def get_manager_employees(request, id):
+
+    current_user = request.user_obj
     if request.method != "GET":
         return JsonResponse({"error": "GET request required"}, status=400)
 

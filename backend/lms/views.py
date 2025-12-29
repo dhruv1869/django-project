@@ -20,7 +20,7 @@ from datetime import datetime, date
 from decimal import Decimal
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from user.permissions import JWTAuthenticationPermission,IsHRorSuperAdmin, IsHR, IsManager, IsEmployee ,IsHRManagerAdmin
 
 AUTH_HEADER = openapi.Parameter(
     "Authorization",
@@ -45,7 +45,7 @@ AUTH_HEADER = openapi.Parameter(
     },
 )
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 def create_leave_balance(request):
     token = request.headers.get("Authorization")
     if not token or not token.startswith("Bearer "):
@@ -113,7 +113,7 @@ def create_leave_balance(request):
     responses={201: "Leave applied"},
 )
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsEmployee])
 def apply_leave(request):
 
     user, error_response = authenticate_request(request)
@@ -260,7 +260,7 @@ def apply_leave(request):
     manual_parameters=[AUTH_HEADER],
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsEmployee])
 def get_my_leaves(request):
 
     user, error_response = authenticate_request(request)
@@ -302,7 +302,7 @@ def get_my_leaves(request):
     responses={200: LeaveRequestDetailSerializer},
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRManagerAdmin])
 def get_leave_by_id(request, leave_id):
 
     user, error_response = authenticate_request(request)
@@ -381,7 +381,7 @@ def get_all_leaves(request):
     manual_parameters=[AUTH_HEADER],
 )
 @api_view(["PATCH"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsEmployee])
 def update_leave_request(request, leave_id):
 
     user, error_response = authenticate_request(request)
@@ -523,7 +523,7 @@ from django.views.decorators.csrf import csrf_exempt
 )
 @csrf_exempt
 @api_view(["PATCH"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 def update_leave_balance(request, employee_id):
 
     user, error_response = authenticate_request(request)
@@ -600,7 +600,7 @@ def update_leave_balance(request, employee_id):
     ),
 )
 @api_view(["PATCH"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRManagerAdmin])
 def update_leave_status(request, leave_id):
 
     user, error_response = authenticate_request(request)
@@ -771,7 +771,7 @@ def update_leave_status(request, leave_id):
     manual_parameters=[AUTH_HEADER],
 )
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 def get_leave_balance(request, empid):
     token = request.headers.get("Authorization")
     if not token or not token.startswith("Bearer "):
@@ -832,7 +832,7 @@ def get_leave_balance(request, empid):
     manual_parameters=[AUTH_HEADER],
 )
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
+@permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 def delete_leave_request(request, leave_id):
     token = request.headers.get("Authorization")
     if not token or not token.startswith("Bearer "):
