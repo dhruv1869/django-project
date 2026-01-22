@@ -1,8 +1,7 @@
 from django.http import JsonResponse
 from user.models import User, Employee
 from user.utils.auth import decode_access_token
-from .models import LeaveBalance
-from .serializers import LeaveBalanceCreateSerializer, LeaveRequestCreateSerializer, LeaveRequestListSerializer, LeaveBalanceSerializer, LeaveRequestDetailSerializer
+from .serializers import LeaveBalanceCreateSerializer, LeaveRequestCreateSerializer, LeaveRequestListSerializer, LeaveBalanceSerializer, LeaveRequestDetailSerializer,HolidayCreateSerializer,HolidayListSerializer
 import os
 from datetime import date
 from decimal import Decimal
@@ -13,7 +12,7 @@ from rest_framework import status
 from django.conf import settings
 from user.utils.auth import authenticate_request
 from user.models import Employee
-from .models import LeaveRequest, LeaveBalance
+from .models import LeaveRequest, LeaveBalance,Holiday
 from .utils import calculate_leave_with_weekend_sandwich
 from user.models import EmployeeManagerMap
 from datetime import datetime, date
@@ -44,6 +43,7 @@ AUTH_HEADER = openapi.Parameter(
         403: "Permission denied",
     },
 )
+
 @api_view(["POST"])
 @permission_classes([JWTAuthenticationPermission,IsHRorSuperAdmin])
 def create_leave_balance(request):
@@ -886,3 +886,136 @@ def delete_leave_request(request, leave_id):
         status=200
     )
 
+
+@api_view(["POST"])
+@permission_classes([JWTAuthenticationPermission, IsHRorSuperAdmin])
+def create_holiday(request):
+
+    # 🔹 Token check (same as your API)
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JsonResponse(
+            {"error": "Authorization header missing"},
+            status=401
+        )
+
+    token = token.split(" ")[1]
+    payload = decode_access_token(token)
+    if not payload:
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    current_user_email = payload.get("sub")
+    current_user = User.objects.filter(email=current_user_email).first()
+    if not current_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    # 🔹 Role check
+    if not (current_user.is_superadmin or current_user.is_hr):
+        return JsonResponse(
+            {"error": "Only SuperAdmin or HR can create holiday"},
+            status=403
+        )
+
+    # 🔹 Validate request data
+    serializer = HolidayCreateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
+    festival_date = serializer.validated_data["festival_date"]
+
+    # 🔹 Duplicate check
+    if Holiday.objects.filter(festival_date=festival_date).exists():
+        return JsonResponse(
+            {"error": "Holiday already exists for this date"},
+            status=400
+        )
+
+    # 🔹 Create holiday
+    Holiday.objects.create(
+        festival_date=serializer.validated_data["festival_date"],
+        festival_name=serializer.validated_data["festival_name"],
+        created_by=current_user,
+        updated_by=current_user
+    )
+
+    return JsonResponse(
+        {"message": "Holiday created successfully"},
+        status=201
+    )
+
+@api_view(["GET"])
+@permission_classes([JWTAuthenticationPermission])
+def get_holidays(request):
+    """
+    Accessible by: Admin, HR, Manager, Employee
+    """
+
+    holidays = Holiday.objects.all().order_by("festival_date")
+    serializer = HolidayListSerializer(holidays, many=True)
+
+    return JsonResponse(
+        {
+            "count": len(serializer.data),
+            "holidays": serializer.data
+        },
+        status=200
+    )
+
+
+@api_view(["PATCH"])
+@permission_classes([JWTAuthenticationPermission, IsHRorSuperAdmin])
+def update_holiday(request, festival_id):
+
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JsonResponse(
+            {"error": "Authorization header missing"},
+            status=401
+        )
+
+    token = token.split(" ")[1]
+    payload = decode_access_token(token)
+    if not payload:
+        return JsonResponse({"error": "Invalid token"}, status=401)
+
+    current_user_email = payload.get("sub")
+    current_user = User.objects.filter(email=current_user_email).first()
+    if not current_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    if not (current_user.is_superadmin or current_user.is_hr):
+        return JsonResponse(
+            {"error": "Only SuperAdmin or HR can update holiday"},
+            status=403
+        )
+
+    holiday = Holiday.objects.filter(id=festival_id).first()
+    if not holiday:
+        return JsonResponse(
+            {"error": "Holiday not found"},
+            status=404
+        )
+
+    serializer = HolidayCreateSerializer(
+        holiday,
+        data=request.data,
+        partial=True
+    )
+
+    if not serializer.is_valid():
+        return JsonResponse(serializer.errors, status=400)
+
+    new_date = serializer.validated_data.get("festival_date")
+    if new_date:
+        if Holiday.objects.filter(festival_date=new_date).exclude(id=festival_id).exists():
+            return JsonResponse(
+                {"error": "Another holiday already exists for this date"},
+                status=400
+            )
+
+    serializer.save(updated_by=current_user)
+
+    return JsonResponse(
+        {"message": "Holiday updated successfully"},
+        status=200
+    )

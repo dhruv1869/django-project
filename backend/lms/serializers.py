@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LeaveBalance
+from .models import LeaveBalance, Holiday, LeaveRequest
 
 class LeaveBalanceCreateSerializer(serializers.ModelSerializer):
     employee_id = serializers.IntegerField(write_only=True)
@@ -55,3 +55,21 @@ class LeaveRequestDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveRequest
         fields = "__all__"
+
+class HolidayCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Holiday
+        fields = [
+            "festival_date",
+            "festival_name",
+        ]
+
+class HolidayListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Holiday
+        fields = [
+            "id",
+            "festival_name",
+            "festival_date",
+        ]
+

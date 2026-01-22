@@ -87,3 +87,32 @@ class LeaveBalance(models.Model):
 
     class Meta:
         db_table = "leave_balances"
+
+class Holiday(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    festival_date = models.DateField(unique=True)
+    festival_name = models.CharField(max_length=100)
+
+    created_by = models.ForeignKey(
+        User,
+        related_name="holiday_created",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    updated_by = models.ForeignKey(
+        User,
+        related_name="holiday_updated",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "holiday_calendar"
+        ordering = ["festival_date"]

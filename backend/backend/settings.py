@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'backend.middleware.api_logger.APILoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +59,64 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+import os
+
+LOG_DIR = os.path.join(BASE_DIR, "app_logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s | %(asctime)s | %(name)s | %(message)s"
+        },
+    },
+
+    "handlers": {
+        "info_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/info.log",
+            "formatter": "verbose",
+        },
+        "warning_file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/warning.log",
+            "formatter": "verbose",
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/error.log",
+            "formatter": "verbose",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+
+    "loggers": {
+        # 🔴 Django 403 / 404 / 500 logs
+        "django.request": {
+            "handlers": ["warning_file", "error_file", "console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+
+        # 🔵 Your app logger
+        "app_logger": {
+            "handlers": ["info_file", "warning_file", "error_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
 
 ROOT_URLCONF = 'backend.urls'
 

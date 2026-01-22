@@ -21,7 +21,7 @@ class JWTAuthenticationPermission(BasePermission):
         if not user:
             return False
 
-        request.user_obj = user  
+        request.user_obj = user
         return True
 
 
@@ -53,26 +53,17 @@ class IsHRorSuperAdmin(BasePermission):
     def has_permission(self, request, view):
         return bool(
             hasattr(request, "user_obj")
-            and (request.user_obj.is_hr or request.user_obj.is_superadmin)
-        )
-
-
-class IsHRManagerAdmin(BasePermission):
-    def has_permission(self, request, view):
-        return bool(
-            hasattr(request, "user_obj")
             and (
                 request.user_obj.is_hr
-                or request.user_obj.is_manager
                 or request.user_obj.is_superadmin
             )
         )
-class IsHRManagerAdmin(BasePermission):
 
+
+class IsHRManagerAdmin(BasePermission):
     def has_permission(self, request, view):
         return bool(
             hasattr(request, "user_obj")
-            and request.user_obj
             and (
                 request.user_obj.is_hr
                 or request.user_obj.is_manager

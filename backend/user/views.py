@@ -970,3 +970,4 @@ def get_manager_employees(request, id):
             {"error": f"Internal server error: {str(e)}"},
             status=500
         )
+

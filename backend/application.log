@@ -1,0 +1,5 @@
+[2026-01-22 12:18:30,790] INFO django.utils.autoreload | Watching for file changes with StatReloader
+[2026-01-22 12:19:17,618] INFO lms.middleware | POST /api/user/login/ | User: Anonymous | Status: 200 | Time: 2.421s
+[2026-01-22 12:19:33,105] INFO lms.middleware | GET /api/lms/all-leaves/ | User: Anonymous | Status: 200 | Time: 0.034s
+[2026-01-22 12:25:13,470] INFO lms.middleware | GET /api/user/get/ | User: Anonymous | Status: 200 | Time: 0.063s
+[2026-01-22 12:36:17,313] INFO django.utils.autoreload | C:\Users\admin\Desktop\lms_Backend\backend\backend\settings.py changed, reloading.
