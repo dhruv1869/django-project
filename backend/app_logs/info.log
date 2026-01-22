@@ -1,0 +1,673 @@
+INFO 2026-01-22 12:42:01,462 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:43:46,946 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 12:43:47,585 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:45:10,987 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:45:11,901 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:45:32,958 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:45:33,541 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:46:15,225 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:46:15,863 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:46:40,266 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:46:40,862 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:47:26,644 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:47:27,228 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:47:41,934 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:47:42,535 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:48:00,032 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:48:00,604 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:48:08,828 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:48:09,405 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:48:50,405 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:48:50,981 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:49:06,411 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:49:07,021 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:49:27,052 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:49:27,643 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:49:45,067 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:49:45,671 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:51:58,719 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:52:23,640 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:52:25,246 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:53:11,504 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 12:53:12,892 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 12:57:01,759 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 13:03:14,001 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 13:03:31,108 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\logger.py changed, reloading.
+INFO 2026-01-22 13:03:32,747 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:37:36,837 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:39:08,111 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:41:11,421 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:42:23,579 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:49:43,470 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:50:02,293 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 14:50:04,422 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 14:50:21,011 | app_logger | POST /api/user/login/ | User: Anonymous | Status: 200 | Duration: 3.433s
+ERROR 2026-01-22 14:50:44,047 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 167, in decode_complete
+    self._validate_claims(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        payload,
+        ^^^^^^^^
+    ...<4 lines>...
+        subject=subject,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 262, in _validate_claims
+    self._validate_exp(payload, now, leeway)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 363, in _validate_exp
+    raise ExpiredSignatureError("Signature has expired")
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+INFO | 2026-01-22 14:50:44,059 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.119s
+INFO | 2026-01-22 14:51:06,356 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.203s
+INFO | 2026-01-22 14:53:17,272 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.004s
+WARNING 2026-01-22 14:53:17,275 log Forbidden: /api/user/get/
+INFO 2026-01-22 14:54:42,688 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 14:54:50,289 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.258s
+ERROR 2026-01-22 14:54:59,372 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 220, in decode_complete
+    self._verify_signature(signing_input, header, signature, key, algorithms)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 328, in _verify_signature
+    raise InvalidSignatureError("Signature verification failed")
+jwt.exceptions.InvalidSignatureError: Signature verification failed
+INFO | 2026-01-22 14:54:59,417 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.26s
+INFO 2026-01-22 14:56:10,940 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 14:56:12,917 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 14:57:10,156 autoreload Watching for file changes with StatReloader
+ERROR 2026-01-22 14:57:17,178 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 220, in decode_complete
+    self._verify_signature(signing_input, header, signature, key, algorithms)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 328, in _verify_signature
+    raise InvalidSignatureError("Signature verification failed")
+jwt.exceptions.InvalidSignatureError: Signature verification failed
+INFO | 2026-01-22 14:57:17,198 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.149s
+INFO 2026-01-22 15:01:24,461 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 15:01:26,611 autoreload Watching for file changes with StatReloader
+ERROR 2026-01-22 15:01:32,438 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 220, in decode_complete
+    self._verify_signature(signing_input, header, signature, key, algorithms)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 328, in _verify_signature
+    raise InvalidSignatureError("Signature verification failed")
+jwt.exceptions.InvalidSignatureError: Signature verification failed
+INFO | 2026-01-22 15:01:32,456 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.135s
+INFO 2026-01-22 15:01:49,192 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 15:01:51,374 autoreload Watching for file changes with StatReloader
+ERROR 2026-01-22 15:01:59,915 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 167, in decode_complete
+    self._validate_claims(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        payload,
+        ^^^^^^^^
+    ...<4 lines>...
+        subject=subject,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 262, in _validate_claims
+    self._validate_exp(payload, now, leeway)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 363, in _validate_exp
+    raise ExpiredSignatureError("Signature has expired")
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+INFO | 2026-01-22 15:01:59,981 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.294s
+INFO | 2026-01-22 15:02:17,239 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.235s
+INFO | 2026-01-22 15:02:25,680 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.002s
+WARNING 2026-01-22 15:02:25,681 log Forbidden: /api/user/get/
+INFO 2026-01-22 15:03:51,096 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 15:03:52,972 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:04:11,974 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\middleware.py changed, reloading.
+INFO 2026-01-22 15:04:13,711 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 15:04:19,337 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.009s
+WARNING 2026-01-22 15:04:19,340 log Forbidden: /api/user/get/
+ERROR 2026-01-22 15:04:28,201 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 280, in _load
+    header = json.loads(header_data)
+  File "C:\Users\admin\miniconda3\Lib\json\__init__.py", line 341, in loads
+    s = s.decode(detect_encoding(s), 'surrogatepass')
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 209, in decode_complete
+    payload, signing_input, header, signature = self._load(jwt)
+                                                ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 282, in _load
+    raise DecodeError(f"Invalid header string: {e}") from e
+jwt.exceptions.DecodeError: Invalid header string: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+INFO | 2026-01-22 15:04:28,221 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.141s
+INFO 2026-01-22 15:07:07,408 autoreload Watching for file changes with StatReloader
+ERROR 2026-01-22 15:07:16,957 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 280, in _load
+    header = json.loads(header_data)
+  File "C:\Users\admin\miniconda3\Lib\json\__init__.py", line 341, in loads
+    s = s.decode(detect_encoding(s), 'surrogatepass')
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 209, in decode_complete
+    payload, signing_input, header, signature = self._load(jwt)
+                                                ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 282, in _load
+    raise DecodeError(f"Invalid header string: {e}") from e
+jwt.exceptions.DecodeError: Invalid header string: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+INFO | 2026-01-22 15:07:16,979 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.147s
+INFO | 2026-01-22 15:07:33,575 | app_logger | GET /api/user/get | User: Anonymous | Status: 301 | Duration: 0.026s
+ERROR 2026-01-22 15:07:33,729 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 280, in _load
+    header = json.loads(header_data)
+  File "C:\Users\admin\miniconda3\Lib\json\__init__.py", line 341, in loads
+    s = s.decode(detect_encoding(s), 'surrogatepass')
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 209, in decode_complete
+    payload, signing_input, header, signature = self._load(jwt)
+                                                ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 282, in _load
+    raise DecodeError(f"Invalid header string: {e}") from e
+jwt.exceptions.DecodeError: Invalid header string: 'utf-8' codec can't decode byte 0xc2 in position 13: invalid continuation byte
+INFO | 2026-01-22 15:07:33,746 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.16s
+INFO | 2026-01-22 15:07:53,803 | app_logger | GET /api/user/get | User: Anonymous | Status: 301 | Duration: 0.024s
+INFO | 2026-01-22 15:07:54,122 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.308s
+INFO | 2026-01-22 15:08:02,019 | app_logger | GET /api/userget | User: Anonymous | Status: 404 | Duration: 0.022s
+WARNING 2026-01-22 15:08:02,020 log Not Found: /api/userget
+INFO | 2026-01-22 15:08:41,529 | app_logger | GET /api/ | User: Anonymous | Status: 404 | Duration: 0.008s
+WARNING 2026-01-22 15:08:41,530 log Not Found: /api/
+ERROR 2026-01-22 15:08:55,347 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 293, in _load
+    signature = base64url_decode(crypto_segment)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\utils.py", line 33, in base64url_decode
+    return base64.urlsafe_b64decode(input_bytes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\admin\miniconda3\Lib\base64.py", line 134, in urlsafe_b64decode
+    return b64decode(s)
+  File "C:\Users\admin\miniconda3\Lib\base64.py", line 88, in b64decode
+    return binascii.a2b_base64(s, strict_mode=validate)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+binascii.Error: Invalid base64-encoded string: number of data characters (41) cannot be 1 more than a multiple of 4
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 209, in decode_complete
+    payload, signing_input, header, signature = self._load(jwt)
+                                                ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 295, in _load
+    raise DecodeError("Invalid crypto padding") from err
+jwt.exceptions.DecodeError: Invalid crypto padding
+INFO | 2026-01-22 15:08:55,360 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.097s
+INFO 2026-01-22 15:37:24,446 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:37:47,713 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:37:49,343 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:37:55,619 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:37:56,947 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:40:14,087 autoreload C:\Users\admin\Desktop\lms_Backend\backend\backend\settings.py changed, reloading.
+INFO 2026-01-22 15:40:15,837 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:42:33,286 autoreload C:\Users\admin\Desktop\lms_Backend\backend\backend\settings.py changed, reloading.
+INFO 2026-01-22 15:42:34,557 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:45:24,319 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:45:57,380 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:45:58,729 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:46:14,116 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:46:15,433 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:47:31,372 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:47:32,625 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:47:56,070 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:47:57,620 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:48:34,261 autoreload C:\Users\admin\Desktop\lms_Backend\backend\lms\utils\leave_utils.py changed, reloading.
+INFO 2026-01-22 15:48:35,687 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 15:49:42,027 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 15:49:55,840 | app_logger | POST /api/user/login/ | User: Anonymous | Status: 200 | Duration: 2.635s
+INFO | 2026-01-22 15:50:13,353 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.14s
+ERROR 2026-01-22 15:50:19,919 log Internal Server Error: /api/user/get/
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 293, in _load
+    signature = base64url_decode(crypto_segment)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\utils.py", line 33, in base64url_decode
+    return base64.urlsafe_b64decode(input_bytes)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\admin\miniconda3\Lib\base64.py", line 134, in urlsafe_b64decode
+    return b64decode(s)
+  File "C:\Users\admin\miniconda3\Lib\base64.py", line 88, in b64decode
+    return binascii.a2b_base64(s, strict_mode=validate)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+binascii.Error: Invalid base64-encoded string: number of data characters (41) cannot be 1 more than a multiple of 4
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 503, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 421, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\rest_framework\views.py", line 338, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\permissions.py", line 15, in has_permission
+    payload = decode_access_token(token)
+  File "C:\Users\admin\Desktop\lms_Backend\backend\user\utils\auth.py", line 29, in decode_access_token
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+        jwt,
+    ...<8 lines>...
+        leeway=leeway,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+        jwt,
+    ...<3 lines>...
+        detached_payload=detached_payload,
+    )
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 209, in decode_complete
+    payload, signing_input, header, signature = self._load(jwt)
+                                                ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\Desktop\lms_Backend\my_env\Lib\site-packages\jwt\api_jws.py", line 295, in _load
+    raise DecodeError("Invalid crypto padding") from err
+jwt.exceptions.DecodeError: Invalid crypto padding
+INFO | 2026-01-22 15:50:19,936 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 500 | Duration: 0.106s
+INFO 2026-01-22 17:10:14,498 autoreload Watching for file changes with StatReloader
+INFO 2026-01-22 17:11:43,802 autoreload C:\Users\admin\Desktop\lms_Backend\backend\backend\settings.py changed, reloading.
+INFO 2026-01-22 17:11:45,406 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 17:11:54,271 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.01s
+WARNING 2026-01-22 17:11:54,273 log Forbidden: /api/user/get/
+INFO 2026-01-22 17:12:25,338 autoreload Watching for file changes with StatReloader
+INFO | 2026-01-22 17:13:01,797 | app_logger | POST /api/user/login/ | User: Anonymous | Status: 200 | Duration: 3.36s
+INFO | 2026-01-22 17:13:14,990 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.16s
+INFO | 2026-01-22 17:13:20,643 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.003s
+WARNING 2026-01-22 17:13:20,651 log Forbidden: /api/user/get/
+INFO | 2026-01-22 17:15:16,501 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.246s
+INFO | 2026-01-22 17:15:22,759 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.002s

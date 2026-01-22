@@ -1,37 +1,82 @@
 from django.db import models
+from user.models import Employee, User
 
-class Admin(models.Model):
+class LeaveRequest(models.Model):
     id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=50, unique=True, db_index=True)
-    password = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.username
-
-
-class Employee(models.Model):
-    id = models.AutoField(primary_key=True)
-    empid = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=100)
-    name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    email = models.EmailField(max_length=255, unique=True)
-    hashed_password = models.CharField(max_length=255)
-    is_superadmin = models.BooleanField(default=False)
-    is_hr = models.BooleanField(default=False)
-    is_manager = models.BooleanField(default=False)
-    is_employee = models.BooleanField(default=True)
 
     employee = models.ForeignKey(
         Employee,
-        related_name='user',
+        related_name="leaves",
+        on_delete=models.CASCADE
+    )
+
+    leave_type = models.CharField(max_length=20)
+    apply_date = models.DateTimeField(auto_now_add=True)
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    total_days = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+    leave_without_pay = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+
+    reason = models.TextField(null=True, blank=True)
+    attachment = models.CharField(max_length=255, null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        default="pending"
+    )  # pending, approved, rejected
+
+    half_day_start_type = models.CharField(max_length=20, null=True, blank=True)
+    half_day_end_type = models.CharField(max_length=10, null=True, blank=True)
+
+    approve_date = models.DateField(null=True, blank=True)
+    approve_comment = models.TextField(null=True, blank=True)
+
+    reject_date = models.DateField(null=True, blank=True)
+    reject_comment = models.TextField(null=True, blank=True)
+
+    action_by = models.ForeignKey(
+        User,
+        related_name="leave_actions",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    casual_deducted = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+    earned_deducted = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+    sick_deducted = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+    optional_deducted = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "leave_requests"
+
+class LeaveBalance(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    employee = models.ForeignKey(
+        Employee,
+        related_name="leave_balances",
+        on_delete=models.CASCADE
+    )
+
+    sick_leave = models.FloatField(default=0)
+    casual_leave = models.FloatField(default=0)
+    optional_leave = models.FloatField(default=0)
+    earned_leave = models.FloatField(default=0)
+
+    total_sick_leave = models.FloatField(default=0)
+    total_casual_leave = models.FloatField(default=0)
+    total_optional_leave = models.FloatField(default=0)
+    total_earned_leave = models.FloatField(default=0)
+
+    updated_by = models.ForeignKey(
+        User,
+        related_name="leave_updated_by",
         on_delete=models.SET_NULL,
         null=True,
         blank=True
@@ -40,58 +85,34 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.email
+    class Meta:
+        db_table = "leave_balances"
 
-
-class EmployeeManagerMap(models.Model):
+class Holiday(models.Model):
     id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(
-        Employee,
-        related_name='manager_mapping',
-        on_delete=models.CASCADE
-    )
-    manager = models.ForeignKey(
+
+    festival_date = models.DateField(unique=True)
+    festival_name = models.CharField(max_length=100)
+
+    created_by = models.ForeignKey(
         User,
-        related_name='employees_managed',
-        on_delete=models.CASCADE
+        related_name="holiday_created",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
-    def __str__(self):
-        return f"{self.manager.email} -> {self.employee.name}"
+    updated_by = models.ForeignKey(
+        User,
+        related_name="holiday_updated",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-class TimeLog(models.Model):
-    ACTION_CHOICES = [
-        ('IN', 'IN'),
-        ('OUT', 'OUT'),
-    ]
-
-    id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(Employee, related_name='logs', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField()
-    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
-
-    def __str__(self):
-        return f"{self.employee.name} - {self.action} - {self.timestamp}"
-
-
-class Environment(models.Model):
-    id = models.AutoField(primary_key=True)
-    key = models.CharField(max_length=50, unique=True)
-    value = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.key
-
-
-class MissReport(models.Model):
-    id = models.AutoField(primary_key=True)
-    timestamp = models.DateTimeField()
-    employee = models.ForeignKey(Employee, related_name='reports', on_delete=models.CASCADE)
-    action = models.CharField(max_length=10)
-    reason = models.CharField(max_length=300)
-    status = models.CharField(max_length=10)
-
-    def __str__(self):
-        return f"{self.employee.name} - {self.action} - {self.status}"
+    class Meta:
+        db_table = "holiday_calendar"
+        ordering = ["festival_date"]

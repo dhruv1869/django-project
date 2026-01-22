@@ -20,15 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=2ax1jbl+cry3anx+a2!fi=-ky@qi113(j57b+c1l6#4i8gj=h'
+SECRET_KEY = 'django-insecure-e5)j%#5tsqr9*kv#iu()&_w#v5tezo&$xf#yf7*2l($%pn44&g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+import os
 
-# Application definition
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,12 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'lms',
     'user',
+    'lms',
+    'rest_framework',
+    'django_filters',
+    'rest_framework.authtoken',
+    'rest_framework_swagger',
+    'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
+    'backend.middleware.api_logger.APILoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,6 +59,64 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+import os
+
+LOG_DIR = os.path.join(BASE_DIR, "app_logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s | %(asctime)s | %(name)s | %(message)s"
+        },
+    },
+
+    "handlers": {
+        "info_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/info.log",
+            "formatter": "verbose",
+        },
+        "warning_file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/warning.log",
+            "formatter": "verbose",
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "app_logs/error.log",
+            "formatter": "verbose",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+
+    "loggers": {
+        # 🔴 Django 403 / 404 / 500 logs
+        "django.request": {
+            "handlers": ["warning_file", "error_file", "console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+
+        # 🔵 Your app logger
+        "app_logger": {
+            "handlers": ["info_file", "warning_file", "error_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -87,6 +153,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -104,6 +171,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+}
+
+
+
 
 
 # Internationalization
