@@ -671,3 +671,5 @@ INFO | 2026-01-22 17:13:20,643 | app_logger | GET /api/user/get/ | User: Anonymo
 WARNING 2026-01-22 17:13:20,651 log Forbidden: /api/user/get/
 INFO | 2026-01-22 17:15:16,501 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.246s
 INFO | 2026-01-22 17:15:22,759 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 403 | Duration: 0.002s
+INFO | 2026-01-27 10:33:23,744 | app_logger | POST /api/user/login/ | User: Anonymous | Status: 200 | Duration: 0.969s
+INFO | 2026-01-27 10:33:43,253 | app_logger | GET /api/user/get/ | User: Anonymous | Status: 200 | Duration: 0.072s

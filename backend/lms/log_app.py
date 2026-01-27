@@ -9,9 +9,6 @@ formatter = logging.Formatter(
     "%(levelname)s | %(asctime)s | %(name)s | %(message)s"
 )
 
-# --------------------
-# Handlers
-# --------------------
 
 info_handler = logging.FileHandler(os.path.join(LOG_DIR, "info.log"))
 info_handler.setLevel(logging.INFO)
@@ -28,9 +25,7 @@ error_handler.setFormatter(formatter)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 
-# --------------------
-# Central App Logger
-# --------------------
+
 
 loggers = logging.getLogger("app_logger")
 loggers.setLevel(logging.INFO)
